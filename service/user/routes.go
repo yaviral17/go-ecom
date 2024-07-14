@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	utils "github.com/yaviral17/go-ecom/Utils"
 	"github.com/yaviral17/go-ecom/service/auth"
 	"github.com/yaviral17/go-ecom/types"
@@ -32,9 +33,16 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	// get JSON payload
 
 	var payload types.RegisterUserPayload
-	if err := utils.ParseJSON(r, payload); err != nil {
+	if err := utils.ParseJSON(r, &payload); err != nil {
 
 		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// validate the payload
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %s", errors))
 		return
 	}
 
@@ -64,4 +72,5 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	utils.WriteJSON(w, http.StatusCreated, map[string]string{"message": "User created successfully"})
 }
