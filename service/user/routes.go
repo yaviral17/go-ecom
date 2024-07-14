@@ -30,41 +30,36 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
-	// get JSON payload
-
-	var payload types.RegisterUserPayload
-	if err := utils.ParseJSON(r, &payload); err != nil {
-
+	var user types.RegisterUserPayload
+	if err := utils.ParseJSON(r, &user); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
 	}
 
-	// validate the payload
-	if err := utils.Validate.Struct(payload); err != nil {
+	if err := utils.Validate.Struct(user); err != nil {
 		errors := err.(validator.ValidationErrors)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %s", errors))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
 		return
 	}
 
-	// check if the user exists
-	_, err := h.store.GetUserByEmail(payload.Email)
+	// check if user exists
+	_, err := h.store.GetUserByEmail(user.Email)
 	if err == nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("user with email %s already exists", payload.Email))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("user with email %s already exists", user.Email))
 		return
 	}
 
-	hashedPassword, err := auth.HashPassword(payload.Password)
-
+	// hash password
+	hashedPassword, err := auth.HashPassword(user.Password)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	// if it doesn't exist, create a new user
 	err = h.store.CreateUser(&types.User{
-		FirstName: payload.FirstName,
-		LastName:  payload.LastName,
-		Email:     payload.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
 		Password:  hashedPassword,
 	})
 	if err != nil {
@@ -72,5 +67,5 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusCreated, map[string]string{"message": "User created successfully"})
+	utils.WriteJSON(w, http.StatusCreated, nil)
 }

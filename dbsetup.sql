@@ -1,1 +1,1 @@
-CREATE DATABASE `ecom`;
+DROP DATABASE `ecom`;

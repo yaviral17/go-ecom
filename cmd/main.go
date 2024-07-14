@@ -6,16 +6,16 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/yaviral17/go-ecom/cmd/api"
-	"github.com/yaviral17/go-ecom/cmd/config"
 	"github.com/yaviral17/go-ecom/cmd/db"
+	"github.com/yaviral17/go-ecom/config"
 )
 
 func main() {
 	// Call the function from the package
 	// and print the result
 	db, err := db.NewMySQLStorage(mysql.Config{
-		User:                 config.Envs.DBuser,
-		Passwd:               config.Envs.DBpass,
+		User:                 config.Envs.DBUser,
+		Passwd:               config.Envs.DBPass,
 		Addr:                 config.Envs.DBAddr,
 		DBName:               config.Envs.DBName,
 		Net:                  "tcp",

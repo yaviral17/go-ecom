@@ -26,8 +26,8 @@ func (s *APIServer) Run() error {
 
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
 
-	userStore := user.NewStore(s.db)
-	userHandler := user.NewHandler(userStore)
+	userHandler := user.NewHandler(user.NewStore(s.db))
+
 	userHandler.RegisterRoutes(subrouter)
 
 	log.Println("Listening to port 8080")

@@ -10,8 +10,8 @@ type Config struct {
 	PublicHost string
 	Port       string
 
-	DBuser string
-	DBpass string
+	DBUser string
+	DBPass string
 	DBAddr string
 	DBName string
 }
@@ -24,8 +24,8 @@ func initConfig() Config {
 	return Config{
 		PublicHost: getEnv("PUBLIC_HOST", "127.0.0.1"),
 		Port:       getEnv("PORT", "8080"),
-		DBuser:     getEnv("DB_USER", "root"),
-		DBpass:     getEnv("DB_PASS", "password"),
+		DBUser:     getEnv("DB_USER", "root"),
+		DBPass:     getEnv("DB_PASS", "password"),
 		DBAddr:     getEnv("DB_ADDR", "127.0.0.1:3306"),
 		DBName:     getEnv("DB_NAME", "ecom"),
 	}
